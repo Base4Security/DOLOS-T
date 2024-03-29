@@ -12,9 +12,9 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
-1. Run this bot '...'  
-2. Use the function '....'
-3. See error
+1. Start DOLOST using Docker client...
+2. Navigate to...
+3. Start an...
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.
@@ -24,7 +24,6 @@ If applicable, add screenshots to help explain your problem.
 
 **Environment (please complete the following information):**
  - OS: [e.g. Linux]
- - Platform [e.g. discord, slack]
  - Version [e.g. 1.0,1.2]
 
 **Additional context**
