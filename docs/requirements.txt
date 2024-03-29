@@ -1,0 +1,11 @@
+myst_parser
+Sphinx
+sphinx-rtd-theme
+sphinx-toolbox
+sphinx-copybutton
+
+# DOLOST requirements
+flask
+docker
+flask-socketio
+gevent-websocket

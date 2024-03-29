@@ -1,0 +1,8 @@
+****************************************
+Welcome to My Custom SSH Server
+****************************************
+
+This is a development server, don't break anything.
+
+2024 © BASE4 Security
+

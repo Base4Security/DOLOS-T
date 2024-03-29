@@ -1,0 +1,20 @@
+# Use the rsyslog base image
+FROM rsyslog/syslog_appliance_alpine
+
+# Configure rsyslog to listen for incoming logs
+COPY ./app/rsyslog.conf /etc/rsyslog.conf
+
+#Configure observables extractors
+RUN mkdir /var/log/observables
+COPY ./app/extract_ips.sh /usr/local/bin/extract_ips.sh
+RUN chmod +x /usr/local/bin/extract_ips.sh
+
+# Create a crontab file and add a job that runs your script every 5 minutes
+# CHANGE ME TO 5 # CHANGE ME TO 5 # CHANGE ME TO 5 # CHANGE ME TO 5 # CHANGE ME TO 5 # CHANGE ME TO 5 # CHANGE ME TO 5 # CHANGE ME TO 5 # CHANGE ME TO 5
+RUN (crontab -l 2>/dev/null; echo "*/1 * * * * /usr/local/bin/extract_ips.sh >> /var/log/observables.log 2>&1") | crontab -
+
+# Expose the syslog and log files
+EXPOSE 514/udp
+EXPOSE 514/tcp
+
+

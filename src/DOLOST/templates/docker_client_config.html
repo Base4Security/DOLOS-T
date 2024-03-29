@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %} Docker Client Configuration {% endblock %}
+
+{% block extra_head %}
+<script type="text/javascript" src="{{url_for('static', filename='js/docker_config_worker.js')}}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container rounded-4 p-4 bg-light col-6" id="content">
+	<div class="row align-items-center">
+		<div class="col">
+			<span class="d-inline-block" data-bs-placement="bottom" data-bs-toggle="tooltip" title="Edit or simply view the Decoys from a JSON or Excel file. Also save your modifications directly from here!">
+				<h2>Docker Client Configuration</h2>
+			</span>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col">
+		        <div class="mb-3">
+		            <label for="configType" class="form-label">Select configuration type:</label>
+		            <select id="configType" class="form-select">
+		                <option value="env">From Environment Variables</option>
+		                <option value="socket">From Socket</option>
+		                <option value="tcp">From TCP</option>
+		                <option value="tcp_ssl">From TCP with SSL</option>
+		            </select>
+		        </div>
+
+		        <div id="configFields" class="mb-3">
+		            <!-- Configuration fields will be inserted here based on the selected type -->
+		        </div>
+
+		        <button id="configureButton" class="btn btn-orange text-white">
+		        	<i class="bi bi-gear-wide-connected"></i> Configure Docker Client
+		        </button>
+		</div>
+	</div>
+</div>
+{% endblock content %}
+{% block scripts %}
+<script type="text/javascript" module>
+	var modifyDockerClientUrl = "{{ url_for('api.modify_docker_client') }}";
+    var dockerConfig = JSON.parse('{{ docker_config | tojson | safe }}');
+</script>
+{% endblock scripts %}

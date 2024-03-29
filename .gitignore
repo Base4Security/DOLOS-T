@@ -1,0 +1,11 @@
+.venv*
+.env
+
+*-dev*
+*-DEV*
+
+*.pyc
+
+operationsdb.json
+docker_client_config
+_build/

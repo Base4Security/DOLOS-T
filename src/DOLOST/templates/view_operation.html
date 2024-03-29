@@ -1,0 +1,434 @@
+{% extends 'base.html' %}
+
+{% block title %} {{  operation.preparation.name|title }}  {% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style type="text/css">
+	.carousel-control-prev {
+		position: absolute;
+		top: 50%;
+		left: -12%;
+		transform: translateY(-50%);
+	}
+
+	.carousel-control-next {
+		position: absolute;
+		top: 50%;
+		right: -12%;
+		transform: translateY(-50%);
+	}
+
+	.carousel-control-prev-icon {
+		background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E") !important;
+	}
+
+	.carousel-control-next-icon {
+		background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E") !important;
+	}
+
+	.carousel-control-next-icon,
+	.carousel-control-prev-icon {
+		filter: invert(100%);
+	}
+
+	.dot {
+	    height: 10px;
+	    width: 10px;
+	    border-radius: 50%;
+	    display: inline-block;
+	    margin-right: 5px;
+	    animation: radar 2s ease-out infinite;
+	}
+
+	.container-active {
+		--box-shadow-color-in: rgba(124, 252, 0, 0.4);
+		--box-shadow-color-out: rgba(124, 252, 0, 0);
+	    background-color: #7CFC00;
+	}
+
+	.container-inactive {
+		--box-shadow-color-in: rgba(252, 0, 0, 0.4);
+		--box-shadow-color-out: rgba(252, 0, 0, 0);
+	    background-color: #FC0000;
+	}
+
+	@keyframes radar {
+	    0% {
+	        box-shadow: 0 0 0 0px var(--box-shadow-color-in);
+	    }
+	    100% {
+	        box-shadow: 0 0 0 10px var(--box-shadow-color-out);
+	    }
+	}
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.js"></script>
+<script src="{{ url_for('static', filename='js/view_operations_worker.js') }}" type="module"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="container" id="content">
+	<div class="row align-items-center">
+		<div class="col">
+			<h2>{{ operation.preparation.name }}</h2>
+		</div>
+		<div class="col-auto">
+			<a class="btn btn-secondary btn-sm text-white" data-bs-placement="top" data-bs-toggle="tooltip" title="Refresh operation's information" href="{{ url_for('views.view_operation', operation_id=operation.id) }}">
+				<i class="bi bi-arrow-repeat"></i>
+			</a>
+			<button type="button" class="btn btn-primary ms-2 btn-sm" data-bs-toggle="modal" data-bs-target="#NewDecoyModal">
+				<i class="bi bi-plus"></i> Add Decoy
+			</button>
+			<button type="button" class="btn btn-success ms-2 btn-sm" data-bs-toggle="modal" data-bs-target="#EditOpModal">
+				<i class="bi bi-pencil"></i> Edit Operation
+			</button>
+		</div>
+	</div>
+	<hr>
+	<div class="row">
+		<div class="container mt-4 mb-4">
+		    <div class="row">
+		        <div class="col">
+		            <div class="accordion" id="OpAccordion">
+		                <div class="accordion-item">
+		                    <h2 class="accordion-header">
+		                        <button class="accordion-button {% if containers %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#operationDetails" aria-expanded="{{ not containers }}" aria-controls="operationDetails">
+		                            Operation Details
+		                        </button>
+		                    </h2>
+		                    <div id="operationDetails" class="accordion-collapse collapse {% if not containers %} show {% endif %}" aria-labelledby="operationDetails" data-bs-parent="#OpAccordion">
+		                        <div class="accordion-body">
+		                            {% for section_name, section_data in operation.items() %}
+		                                {% if section_data and section_name not in ['id', 'decoys'] %}
+		                                    {% set section_values = section_data.values()|list %}
+		                                    {% set non_empty_values = [] %}
+		                                    {% for value in section_values %}
+		                                        {% if value|trim %}
+		                                            {% set non_empty_values = non_empty_values.append(value) %}
+		                                        {% endif %}
+		                                    {% endfor %}
+		                                    {% if non_empty_values %}
+		                                        <div class="row">
+		                                            <h3>{{ section_name.replace("_", " ")|title }}</h3>
+		                                            {% for detail_key, detail_value in section_data.items() %}
+		                                                {% if detail_value|trim %}
+		                                                    <div class="col-md-4">
+		                                                        <div class="mb-3 bg-light p-3 rounded">
+		                                                            <p class="fw-bold">{{ detail_key.replace("_", " ")|title }}</p>
+		                                                            <p class="fw-normal">{{ detail_value }}</p>
+		                                                        </div>
+		                                                    </div>
+		                                                {% endif %}
+		                                            {% endfor %}
+		                                        </div>
+		                                    {% endif %}
+		                                {% endif %}
+		                            {% endfor %}
+		                        </div>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+		{% if containers %}
+		<div class="col">
+			<section class="rounded-4 bg-light p-4">
+				<h3>Decoys</h3>
+				<div id="decoysCarousel" class="carousel slide p-2">
+					<div class="carousel-inner">
+						{% for i in range(0, containers|length, 3) %}
+						<div class="carousel-item {% if loop.index == 1 %}active{% endif %}">
+							<div class="row">
+								{% for container in containers[i:i+3] %}
+								<div class="col-md-4">
+									<div class="card h-100 d-flex flex-column">
+								        <div class="card-header text-center"><b>{{ container['Hostname'] }}</b></div>
+								        <ul class="list-group list-group-flush">
+								            <li class="list-group-item">Description: {{ container['Description'] }}</li>
+								            <li class="list-group-item">IP: {{ container['IP'] }}</li>
+								            <li class="list-group-item">Subnet: {{ container['Subnet'] }}</li>
+								            <li class="list-group-item">Gateway: {{ container['Gateway'] }}</li>
+								            <li class="list-group-item">Deception Network: {{ container['DeceptionNetwork'] }}</li>
+								            <li class="list-group-item">Service Ports: {{ container['ServicePorts'] }}</li>
+								            <li class="list-group-item">Service: {{ container['Service'] }}</li>
+											<li class="list-group-item">Decoy Files: {{ container['DecoyFiles'] }}</li>
+								            <li class="list-group-item">Status: <span class="ms-2 dot {{ 'container-active' if 'Up' in container['Status'] else 'container-inactive' }}"></span> {{ container['Status'] }}</li>
+								        </ul>
+										<div class="card-footer d-flex align-items-center justify-content-center flex-grow-1">
+										<div class="btn-group" role="group" aria-label="Decoy control buttons">
+										{% if 'Up' in container['Status'] %}
+											<button class="btn btn-primary showStatsButton" data-container-id="{{ container['Id'] }}" data-bs-placement="bottom" data-bs-toggle="tooltip" title="Show container stats">
+											    <i class="bi bi-speedometer"></i>
+											</button>
+										    <button class="btn btn-danger containerStopButton" data-container-id="{{ container['Id'] }}" data-bs-placement="bottom" data-bs-toggle="tooltip" title="Stop decoy">
+										        <i class="bi bi-stop-circle"></i>
+										    </button>
+										    <button class="btn btn-secondary containerUndeployButton" data-container-hostname="{{ container['Hostname'] }}"  data-container-id="{{ container['Id'] }}" data-bs-placement="bottom" data-bs-toggle="tooltip" title="Hold to undeploy decoy">
+										        <i class="bi bi-trash"></i>
+										    </button>
+										{% elif 'Not Deployed' in container['Status'] %}
+										    <button class="btn btn-orange text-white containerDeployButton" data-container-hostname="{{ container['Hostname'] }}" data-bs-placement="bottom" data-bs-toggle="tooltip" title="Deploy decoy">
+										        <i class="bi bi-tools"></i>
+										    </button>
+											<button class="btn btn-secondary decoyDeleteButton" data-container-hostname="{{ container['Hostname'] }}"  data-container-id="{{ container['Id'] }}" data-bs-placement="bottom" data-bs-toggle="tooltip" title="Hold to delete decoy">
+										        <i class="bi bi-trash"></i>
+										    </button>
+										{% else %}
+										    <button class="btn btn-success containerStartButton" data-container-id="{{ container['Id'] }}"data-bs-placement="bottom" data-bs-toggle="tooltip" title="Start decoy">
+										        <i class="bi bi-play"></i>
+										    </button>
+										    <button class="btn btn-secondary containerUndeployButton" data-container-hostname="{{ container['Hostname'] }}"  data-container-id="{{ container['Id'] }}" data-bs-placement="bottom" data-bs-toggle="tooltip" title="Hold to undeploy decoy">
+										        <i class="bi bi-trash"></i>
+										    </button>
+										{% endif %}
+										</div>
+										</div>
+									</div>
+								</div>
+								{% endfor %}
+							</div>
+						</div>
+						{% endfor %}
+					</div>
+    				{% if containers|length > 3 %}
+					<button class="carousel-control-prev" type="button" data-bs-target="#decoysCarousel" data-bs-slide="prev">
+						<span class="carousel-control-prev-icon " aria-hidden="true"></span>
+						<span class="visually-hidden">Previous</span>
+					</button>
+					<button class="carousel-control-next" type="button" data-bs-target="#decoysCarousel" data-bs-slide="next">
+						<span class="carousel-control-next-icon" aria-hidden="true"></span>
+						<span class="visually-hidden">Next</span>
+					</button>
+					{% endif %}
+				</div>
+			</section>
+		</div>
+		{% endif %}
+	</div>
+	<br>
+	{% if containers %}
+	<div class="row d-none" id="stats-container">
+		<div class="col">
+			<section class="bg-light p-4 rounded-4">
+				<div class="container">
+					<div class="row align-items-center">
+						<div class="col">
+							<h3>Stats</h3>
+						</div>
+					</div>
+					<div class="row" id="chartsPlaceholders">
+						<div class="col-md">
+							<canvas id="cpuUsageChart"></canvas>
+						</div>
+						<div class="col-md">
+							<canvas id="storageUsedChart"></canvas>
+						</div>
+						<div class="col-md">
+							<canvas id="networkActivityChart"></canvas>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	</div>
+	{% endif %}
+	<br>
+
+	<!-- New Decoy Modal -->
+	<div class="modal modal-lg fade" id="NewDecoyModal" tabindex="-1" aria-labelledby="NewDecoyModalLabel" aria-hidden="true">
+	    <div class="modal-dialog modal-dialog-centered">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h5 class="modal-title" id="NewDecoyModalLabel">Add Decoy</h5>
+	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	            </div>
+	            <form id="decoyForm">
+	                <div class="modal-body">
+	                    <div class="mb-3">
+	                        <h5>General</h6>
+	                        <div class="row">
+	                            <div class="col">
+	                                <label class="form-label" for="DecoyHostname">Hostname:</label>
+	                                <input class="form-control" type="text" id="DecoyHostname" name="Hostname" value="SshService">
+	                            </div>
+	                            <div class="col">
+	                                <label class="form-label" for="DecoyDescription">Description:</label>
+	                                <input class="form-control" type="text" id="DecoyDescription" name="Description" value="This is a Custom service for DevNet">
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <div class="mb-3">
+	                        <h5>Networking</h6>
+	                        <div class="row">
+	                            <div class="col">
+	                                <label class="form-label" for="DecoyIP">IP:</label>
+	                                <input class="form-control" type="text" id="DecoyIP" name="IP" value="172.16.127.150">
+	                            </div>
+	                            <div class="col">
+	                                <label class="form-label" for="DecoySubnet">Subnet:</label>
+	                                <input class="form-control" type="text" id="DecoySubnet" name="Subnet" value="172.16.127.0/24">
+	                            </div>
+	                        </div>
+	                        <div class="row">
+	                            <div class="col">
+	                                <label class="form-label" for="DecoyGateway">Gateway:</label>
+	                                <input class="form-control" type="text" id="DecoyGateway" name="Gateway" value="172.16.127.100">
+	                            </div>
+	                            <div class="col">
+	                                <label class="form-label" for="DecoyDeceptionNetwork">Deception Network:</label>
+	                                <input class="form-control" type="text" id="DecoyDeceptionNetwork" name="DeceptionNetwork" value="NetworkOpSSH">
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <div class="mb-3">
+	                        <h5>Service</h6>
+	                        <div class="row">
+	                            <div class="col">
+	                                <label class="form-label" for="DecoyServicePorts">Service Ports:</label>
+	                                <input class="form-control" type="text" id="DecoyServicePorts" name="ServicePorts" placeholder="{'22/tcp': 32}" value="{'22/tcp': 32}">
+	                            </div>
+	                            <div class="col">
+	                                <label class="form-label" for="DecoyService">Service:</label>
+	                                <input class="form-control" type="text" id="DecoyService" name="Service" placeholder="apache | mysql | ssh" value="ssh">
+	                            </div>
+	                        </div>
+	                        <div class="row">
+	                            <div class="col">
+	                                <label class="form-label" for="DecoyServiceFiles">Decoy Files:</label>
+	                                <input class="form-control" type="text" id="DecoyServiceFiles" name="DecoyFiles" placeholder="Folder on decoyfiles/" value="decoy_ssh">
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div>
+	                <div class="modal-footer">
+	                    <button id="saveNewDecoy" type="submit" class="btn btn-primary">Save</button>
+	                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+	                </div>
+	            </form>
+	        </div>
+	    </div>
+	</div>
+	<!-- / New Decoy Modal -->
+
+	<!-- Edit Operation Modal -->
+	<div class="modal modal-lg fade" id="EditOpModal" tabindex="-1" aria-labelledby="EditOpModalLabel" aria-hidden="true">
+	    <div class="modal-dialog modal-dialog-centered">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h5 class="modal-title" id="EditOpModalLabel">Edit Operation</h5>
+	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	            </div>
+				<div class="modal-body">
+					<!-- Preparation Accordion -->
+					<div class="accordion mt-2" id="EditOpAccordion1">
+						<div class="accordion-item edit-op-item">
+							<h2 class="accordion-header">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#EditOpHeading1" aria-expanded="true" aria-controls="EditOpHeading2">
+									Preparation
+								</button>
+							</h2>
+							<div id="EditOpHeading1" class="accordion-collapse collapse" data-bs-parent="#EditOpAccordion1">
+								<div class="accordion-body">
+									<div class="mb-3">
+										<label for="name" class="form-label">Operation Name *</label>
+										<input value="{{ operation.preparation.name }}" type="text" class="form-control" id="name" placeholder="Example: Dev environment protection" required>
+									</div>
+									<div class="mb-3">
+										<label for="objective" class="form-label">Objective</label>
+										<textarea class="form-control" id="objective" rows="2" placeholder="Example: Detect malicious behavior from compromised Developer device" >{{ operation.preparation.objective }}</textarea>
+									</div>
+									<div class="mb-3">
+										<label for="assets" class="form-label">Main Assets involved</label>
+										<textarea class="form-control" id="assets" rows="3" placeholder="Example: Developer PC | Office Network | GitHub Repositories | Internal Dev Server | Internal DB Server" >{{ operation.preparation.assets }}</textarea>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+					<!-- / Preparation Accordion -->
+					<!-- Narrative Accordion -->
+					<div class="accordion mt-2" id="EditOpAccordion2">
+						<div class="accordion-item edit-op-item">
+							<h2 class="accordion-header">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#EditOpHeading2" aria-expanded="true" aria-controls="EditOpHeading2">
+									Narrative
+								</button>
+							</h2>
+							<div id="EditOpHeading2" class="accordion-collapse collapse" data-bs-parent="#EditOpAccordion2">
+								<div class="accordion-body">
+									<div class="mb-3">
+										<label for="storytelling" class="form-label">Storytelling</label>
+										<textarea class="form-control" id="storytelling" rows="3" placeholder="Example: We have an old version of our web app available in the network that is used for testing. | Leonardo, it's our external developer that is involved in some interesting projects">{{ operation.narrative.storytelling }}</textarea>
+									</div>
+									<div class="mb-3">
+										<label for="deception_activities" class="form-label">Deception Activities</label>
+										<textarea class="form-control" id="deception_activities" rows="3" placeholder="Example: Leonardo user created and uploaded in 25% of the Developers computers | Some curated project files from real user with Leonardo in FS that reference to a DolosT decoy | A monitored cloud key and secret key in some real document some developer computer " >{{ operation.narrative.deception_activities }}</textarea>
+									</div>
+									<div class="mb-3">
+										<label for="monitoring" class="form-label">Monitoring</label>
+										<textarea class="form-control" id="monitoring" rows="3" placeholder="Example: Leonardo user logon and usage | Cloud token monitoring to SIEM | DolosT logs to SIEM" >{{ operation.narrative.monitoring }}</textarea>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+					<!-- / Narrative Accordion -->
+					<!--  Closure criteria Accordion -->
+					<div class="accordion mt-2" id="EditOpAccordion3">
+						<div class="accordion-item edit-op-item">
+							<h2 class="accordion-header">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#EditOpHeading3" aria-expanded="true" aria-controls="EditOpHeading2">
+									Closure criteria
+								</button>
+							</h2>
+							<div id="EditOpHeading3" class="accordion-collapse collapse" data-bs-parent="#EditOpAccordion3">
+								<div class="accordion-body">
+									<div class="mb-3">
+										<label for="limits" class="form-label">Limits</label>
+										<textarea class="form-control" id="limits" rows="3" placeholder=" ">{{ operation.closure_criteria.limits }}</textarea>
+									</div>
+									<div class="mb-3">
+										<label for="end_date">End Date</label>
+										<input value="{{ operation.closure_criteria.end_date }}" id="end_date" class="form-control" type="date" />
+									</div>
+									<div class="mb-3">
+										<label for="commander" class="form-label">Operation Commander</label>
+										<input value="{{ operation.closure_criteria.commander }}" class="form-control" id="commander" placeholder="Example: Joaquin Maldivas" ></input>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+				</div>
+	            <div class="modal-footer">
+	                <button id="SaveEditOp" type="submit" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
+	                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!-- / Edit Operation Modal -->
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+	var newDecoyUrl = "{{ url_for('api.new_decoy', operation_id=operation.id)}}";
+	var editOperationUrl = "{{ url_for('api.edit_operation', operation_id=operation.id)}}";
+	var startContainerUrl = "{{ url_for('api.decoys_start')}}";
+	var stopContainerUrl = "{{ url_for('api.decoys_stop')}}";
+	var deployContainerUrl = "{{ url_for('api.deploy_container', operation_id=operation.id)}}";
+	var undeployContainerUrl = "{{ url_for('api.undeploy_container', operation_id=operation.id)}}";
+	var deleteDecoyUrl = "{{ url_for('api.delete_decoy', operation_id=operation.id)}}";
+
+</script>
+{% endblock %}

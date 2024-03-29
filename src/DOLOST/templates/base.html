@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{% block title %} {% endblock %} | DOLOST </title>
+	<link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='imgs/logo-dark.png') }}">
+
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+	
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+
+	<style type="text/css">
+		@media screen and (min-width:1000px){
+			.nav-item {
+				line-height:60px;
+			}
+		}
+		body {
+			padding-bottom: 100px;
+		}
+
+		.bg-darkmode{
+			background-color: #1b1e1f;
+		}
+
+		.btn-orange {
+		    background-color: #ff7f0e !important;
+		    border-color: #ff7f0e !important;
+		}
+
+		.btn-orange:hover,
+		.btn-orange:focus,
+		.btn-orange:active,
+		.btn-orange:active:focus,
+		.btn-orange.active {
+		    background-color: #e6600d !important;
+		    border-color: #e6600d !important;
+		}
+
+		@keyframes shake {
+		    0% { transform: translateX(0); }
+		    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+		    20%, 40%, 60%, 80% { transform: translateX(5px); }
+		    100% { transform: translateX(0); }
+		}
+
+		.shaking {
+		    animation: shake 0.5s ease-in-out infinite;
+		}
+
+	</style>
+
+	{% block extra_head %} {% endblock %}
+</head>
+	<body>
+		<nav class="navbar navbar-expand-lg navbar-light bg-white p-3 sticky-top" id="headerNav">
+			<div class="container-fluid">
+				<a class="navbar-brand d-block d-lg-none" href="#">
+					<img src="{{ url_for('static', filename='imgs/logo-light.png') }}" id="logo-image" height="80" />
+				</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarNavDropdown">
+					<ul class="nav nav-tabs mx-auto">
+						<li class="nav-item">
+							<a class="nav-link mx-2" href="{{ url_for('views.activity') }}">Dashboard</a>
+						</li>
+						<li class="nav-item d-xs-none">
+							<a class="mx-4" href="#">
+								<img src="{{ url_for('static', filename='imgs/logo-light.png') }}" id="logo-image" alt="DOLOST" height="70" />
+							</a>				
+						</li>
+						<li class="nav-item">
+							<a class="nav-link mx-2" href="{{ url_for('views.operations') }}">Operations</a>
+						</li>
+						<li class="nav-item">
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		{% block content %} {% endblock %}
+		<!-- Toast Placeholder -->
+		<div class="position-fixed top-0 end-0 p-3" style="z-index: 20000;" id="toast-container"></div>
+		<!-- / Toast Placeholder -->
+
+		<!-- FAQ Modal -->
+		<div class="modal modal-lg fade" id="faqModal" tabindex="-1" aria-labelledby="faqModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+			  <div class="modal-header">
+				<h5 class="modal-title" id="faqModalLabel">Deception Design Frequently Asked Questions</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			  </div>
+			  <div class="modal-body">
+				<!-- FAQ Accordion -->
+				<div class="accordion" id="faqAccordion">
+					<div class="accordion-item">
+						<h2 class="accordion-header">
+							<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqHeading0" aria-expanded="true" aria-controls="faqHeading0">
+								Planning
+							</button>
+						</h2>
+						<div id="faqHeading0" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+							<div class="accordion-body">
+									<li><strong>Objective</strong></li>
+								
+									A <strong>Deception Operation</strong> begins with the definition of the objectives, which should reflect the priorities and be expressed in concrete actions to measure and recognize progress, the objective can answer questions such as:
+								</br>
+									<strong>- What is the adversary we are protecting against? </strong>
+									You can choose and model it for example based on previous incidents, based on CTI or through specific TTPs that are current breaches of your defenses.
+								</br>	
+									<strong>- How do we want them to react and what do we want the adversary to perceive? </strong>
+									We plan what the expected reactions will be and what kind of deception will be posed to the adversary. 
+									Reduce or Increase the ambiguity, to remove him from a particular environment or to hinder the development of his attack.
+								</br></br>
+								<li><strong>Main Assets involved</strong></li>
+
+									Related to the goals of the operation you can discover the main assets of the operation, those could be technical, like specific apps, servers, networks or non-tecnical like a user, a role or a function.
+								</br>									
+									This could be used to understand whats behind the operation.
+								</br>
+							</div>
+						</div>
+					</div>
+					<div class="accordion-item">
+						<h2 class="accordion-header">
+							<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqHeading1" aria-expanded="true" aria-controls="faqHeading1">
+								Preparation
+							</button>
+						</h2>
+						<div id="faqHeading1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+							<div class="accordion-body">
+								<li><strong>Storytelling</strong></li>
+
+								In order to really engage the adversary, it is necessary to create a narrative, a general story to be presented. 
+								This storytelling is the core, the substance, behind the deception activities, its a way to articulate everything.
+
+								Why this decoy is pleaced in this network?
+								Does it make sense that this web app could access to this decoy service?
+								Can we describe a story behind our deception op?
+								</br>	
+								You can start with a simple sentence: "Joaquin, our Front Developer works with this Dev Server from the internal network and use some admin privileges to make changes in the server"
+								</br></br>
+								<li><strong>Deception Activities</strong></li>
+								With the previus defined elements, you are ready to choose your deception acvities. 
+								</br>
+								With DOLOST we can help you to deploy and manage decoys in an isolated network environments, every decoy service its exposed in a port in your docker env. Then you need to create NAT rules in your own networks to allow the decoy services to be presented as locally in the location that you planned.
+								</br>
+								It is recommend to incorporate another deception elements to the environment to support your narrative like breadcrumbs, honeytokens, useless information or any other. If you use some of them, you can document the usage with your operation to be aware of that.
+								</br></br>
+								<li><strong>Limits</strong></li>
+
+								Every operation need to be defined in the bondaries of some definitions, the "Operation Commander" its going to be the owner of the operation or the responsible for the definitions.
+								</br>
+								With time the engagement activities start to lose their value, this is why its important to define an End Date and some criterias to "close the operation". 
+								</br>
+								For example: How we are going to proceeed with a decoy after we detect some malicious behavior that correspond to an affected server in the network? 
+
+							</div>
+						</div>
+					</div>
+
+					<div class="accordion-item">
+						<h2 class="accordion-header">
+							<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqHeading2" aria-expanded="true" aria-controls="faqHeading2">
+								Deployment
+							</button>
+						</h2>
+						<div id="faqHeading2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+							<div class="accordion-body">
+									When the plan is ready, you can dump every element in an operation in DOLOST. 
+								</br>
+									Prepare every decoy file to use during the deploy. 
+								</br>
+									Create the networking NAT rules to connect the protected network to the decoy.
+								</br>
+									Place the complement information, and deception elements. 
+								</br>
+									Monitor and Wait patiently...
+							</div>
+						</div>
+					</div>
+					<div class="accordion-item">
+						<h2 class="accordion-header">
+							<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqHeading3" aria-expanded="true" aria-controls="faqHeading3">
+								Monitoring
+							</button>
+						</h2>
+						<div id="faqHeading3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+							<div class="accordion-body">
+								<p>
+									When you deploy a some decoy, a collector is deployed too to storage a lot of logs from those. This logs could be monitored locally in the Activity Dashboard or you can configure an external Syslog to fordward and work with this externaly.
+
+									Remember that the whole idea behind the monitored deception activities is to obtain the accurated internal IoC.
+								</p>
+							</div>
+						</div>
+					</div>
+					<div class="accordion-item">
+						<h2 class="accordion-header">
+							<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqHeading4" aria-expanded="true" aria-controls="faqHeading4">
+								Lessons learned
+							</button>
+						</h2>
+						<div id="faqHeading4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+							<div class="accordion-body">
+								<p>
+									Every operation is not an island, before finishing it, you need to extract some value for the improvement of the next operation.
+								</br></br>
+									This is why the plannification and reports are so important, every cycle you can improve the story, the deception elements, or the dispossure of the decoys in the environment.
+
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- / FAQ Accordion -->
+			  </div>
+			  <div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			  </div>
+			</div>
+		  </div>
+		</div>
+		<!-- / FAQ Modal -->
+
+	<!-- Modal Clear Collector -->
+	<div class="modal modal-lg fade" id="CollectorCleanModal" tabindex="-1">
+		<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLabel">Clean Collector Container</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">	</button>
+			</div>
+			<div class="modal-body">
+			You are going to clean the collector decoy in your docker environment. Use the Clean button and be patient...
+			</div>
+			<div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			<button id="cleancollectorsubmit" type="button" data-bs-dismiss="modal" class="btn btn-danger me-1">Clean Collector</button>
+			</div>
+		</div>
+		</div>
+  	</div>
+	<!-- / Modal Clear Collector -->
+
+	<!-- Modal Clean Networks -->
+	<div class="modal modal-lg fade" id="CleanNetworks" tabindex="-1">
+		<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLabel">Clean unused Networks</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">	</button>
+			</div>
+			<div class="modal-body">
+			You are going to clean the DolostT unused networks in your docker environment. Use the Clean button and be patient...
+			</div>
+			<div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			<button id="cleannetworkssubmit" type="button" data-bs-dismiss="modal" class="btn btn-danger me-1">Clean Networks</button>
+			</div>
+		</div>
+		</div>
+  	</div>
+	<!-- / Modal Clean Networks -->
+
+		<footer class="footer fixed-bottom bg-light">
+			<div class="container-fluid">
+				<div class="row align-items-center justify-content-between">
+					<div class="col-auto">
+						<div class="dropdown dropup d-inline-block">
+							<button class="btn btn-sm text-muted" type="button" id="settingsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-gear-fill"></i>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="settingsDropdown">
+								<li><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#CollectorCleanModal">Clean Collector</a></li>
+								<li><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#CleanNetworks">Clean unused networks</a></li>
+								<li><a class="dropdown-item" type="button" href="{{ url_for('views.docker_client_config')}}">Docker Client config</a></li>
+								<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item" href="#" type="button" data-bs-toggle="modal" data-bs-target="#faqModal">Design FAQ</a></li>
+								<li><hr class="dropdown-divider"></li>
+								<li>
+									<button id="theme-toggle" class="btn btn-primary dropdown-item">
+										<span id="theme-icon" class="bi bi-moon-fill"></span>
+										<span id="theme-text">Dark mode</span>
+									</button>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="col text-center text-muted">
+						<p class="mb-0">Version 1.0 | Found a bug? Let us know! <a href="https://github.com/Base4Security/DOLOS-T/issues/new">Submit a bug report</a>.</p>
+					</div>
+				</div>
+			</div>
+		</footer>
+
+	<script>
+		// Listener for clean collector button
+		document.getElementById("cleancollectorsubmit").addEventListener("click", function () {
+			$.ajax({
+				type: "POST",
+				url: "{{ url_for('api.clean_collector') }}",
+				contentType: "application/json",
+				success: function (result) {
+					b5toast.show("success", "Collector removed!", "The collector's container was deleted.", 3000);
+				},
+				error: function (result, status) {
+					b5toast.show("danger", "Error removing collector", "There was an error when removing the collector.", 3000);
+				}
+			});
+		});
+
+		// Listener for clean collector button
+		document.getElementById("cleannetworkssubmit").addEventListener("click", function () {
+			$.ajax({
+				type: "POST",
+				url: "{{ url_for('api.clean_networks') }}",
+				contentType: "application/json",
+				success: function (result) {
+					b5toast.show("success", "Networks removed!", "The unused networks were deleted.", 3000);
+				},
+				error: function (result, status) {
+					b5toast.show("danger", "Error removing networks", "There was an error when removing some network.", 3000);
+				}
+			});
+		});
+
+	</script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap_toasts.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/theme_switcher.js') }}"></script>
+	{% block scripts %} {% endblock %}
+
+</body>
+</html>

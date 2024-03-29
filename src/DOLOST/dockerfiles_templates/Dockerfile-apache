@@ -1,0 +1,42 @@
+# Use an official Ubuntu image as the base
+FROM ubuntu:latest
+
+# Set the working directory in the container
+WORKDIR /var/www/html
+
+# Enable non interactive installation
+ENV DEBIAN_FRONTEND="noninteractive" TZ="Etc/UTC"
+
+# Install the required dependencies
+RUN apt-get update -y && \
+    apt-get install -y -q \
+    net-tools \
+    iputils-ping \
+    apache2 \
+    libapache2-mod-php \
+    libapache2-mod-security2 && \
+    rm -rf /var/www/html/*
+
+# Configure Apache and ModSecurity
+RUN a2enmod headers && \
+    cp /etc/modsecurity/modsecurity.conf-recommended /etc/modsecurity/modsecurity.conf && \
+    sed -i 's/ServerTokens OS/ServerTokens Prod/' /etc/apache2/conf-available/security.conf && \
+    sed -i 's/ServerSignature On/ServerSignature Off/' /etc/apache2/conf-available/security.conf && \
+    sed -i 's/#Header set X-Frame-Options: \"sameorigin\"/Header set X-Frame-Options: \"sameorigin\"/' /etc/apache2/conf-available/security.conf && \
+    sed -i 's/#Header set X-Content-Type-Options: \"nosniff\"/Header set X-Content-Type-Options: \"nosniff\"/' /etc/apache2/conf-available/security.conf && \
+    sed -i 's/SecRuleEngine DetectionOnly/SecRuleEngine On/' /etc/modsecurity/modsecurity.conf
+
+# Copy your application files into the container
+COPY ./app /var/www/html/
+
+# Output all logs to stdout
+#RUN ln -sf /dev/stdout /var/log/apache2/access.log \
+#    && ln -sf /dev/stderr /var/log/apache2/error.log
+
+RUN find /var/log -type f -name "*" -exec ln -sf /dev/stdout {} \;
+
+# Expose port 80 for Apache
+EXPOSE 80
+
+# Start Apache in the foreground when the container runs
+CMD ["apache2ctl", "-D", "FOREGROUND"]

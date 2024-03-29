@@ -1,0 +1,40 @@
+# Use an official PHP image with Apache as the base
+FROM php:apache
+
+# Set the working directory in the container
+WORKDIR /var/www/html
+
+# Install required dependencies
+RUN apt-get update -y && \
+    apt-get install -y \
+    libxml2-dev \
+    libzip-dev \
+    && docker-php-ext-install mysqli pdo_mysql zip
+
+# Download and install PHPMyAdmin
+RUN apt-get install -y wget && \
+    wget https://files.phpmyadmin.net/phpMyAdmin/5.2.1/phpMyAdmin-5.2.1-all-languages.tar.gz && \
+    tar xvzf phpMyAdmin-5.2.1-all-languages.tar.gz --strip-components=1 -C /var/www/html && \
+    rm phpMyAdmin-5.2.1-all-languages.tar.gz
+
+RUN apt-get install -y -q mariadb-server && \
+    service mariadb start && \
+    mysql -e "CREATE DATABASE mydatabase;" && \
+    mysql -e "USE mydatabase; CREATE TABLE mytable (id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255) NOT NULL);" && \
+    mysql -e "CREATE USER 'user1'@localhost IDENTIFIED BY 'password1';" && \
+    mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'user1'@localhost IDENTIFIED BY 'password1'; FLUSH PRIVILEGES;"
+
+# Set PHPMyAdmin configuration
+COPY ./app /var/www/html/
+
+# Output all logs to stdout
+RUN find /var/log -type f -name "*" -exec ln -sf /dev/stdout {} \;
+
+# Expose port 80 for Apache
+EXPOSE 80
+
+# Expose port 3306 for MySQL
+EXPOSE 3306
+
+# Start Apache in the foreground when the container runs
+CMD ["sh", "-c", "service mariadb start; apache2ctl -D FOREGROUND"]

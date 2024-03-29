@@ -1,0 +1,38 @@
+FROM ubuntu:latest
+
+# Install SSH server
+RUN apt-get update \
+    && apt-get install -y openssh-server \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update \
+    && apt-get install net-tools -y \
+    && apt-get install inetutils-ping -y
+
+# Configure SSH
+RUN mkdir /var/run/sshd
+
+# Set the root password (replace 'your_password' with your desired password)
+# We should be able to handle this file on two ways:
+# - Modify it directly from the context folder, directly to the copy of the Dockerfile
+# - Use the argument buildargs from the DockerManager class, on build(), and modify it as ARG password: 
+#   - REF: https://stackoverflow.com/questions/19537645/how-to-get-an-environment-variable-value-into-dockerfile-during-docker-build
+RUN echo 'root:your_password' | chpasswd
+
+# Copy your custom welcome banner
+COPY ./app/welcome_banner.txt /etc/ssh/welcome-banner
+
+# Update sshd_config to display the custom banner
+RUN echo 'Banner /etc/ssh/welcome-banner' >> /etc/ssh/sshd_config
+
+# Enable Root login
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+# Output all logs to stdout
+RUN find /var/log -type f -name "*" -exec ln -sf /dev/stdout {} \;
+
+# Expose SSH port
+EXPOSE 22
+
+# Start SSH server
+CMD ["/usr/sbin/sshd", "-D"]

@@ -1,0 +1,4 @@
+flask
+docker
+flask-socketio
+gevent-websocket
