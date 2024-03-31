@@ -65,32 +65,17 @@
 					<div class="carousel-inner">
 						<div class="carousel-item active">
 							<div class="row">
-								<div class="col-md-4">
+								<div class="col-md-3">
 									<div class="card h-100 d-flex flex-column">
-										<table class="table table-striped table-hover">
+										<table id="ObservableUsageTable" class="table table-striped table-hover">
 											<thead>
 												<tr>
 													<th scope="col">#</th>
 													<th scope="col">Decoy usage</th>
-													<th scope="col">Timestamp</th>
+													<th scope="col">Last 24hs Hits</th>
 												</tr>
 											</thead>
 											<tbody>
-												<tr>
-													<th scope="row">1</th>
-													<td>SshService</td>
-													<td>09:35hs 10/05/2024</td>
-												</tr>
-												<tr>
-													<th scope="row">2</th>
-													<td>WebService</td>
-													<td>09:46hs 10/05/2024</td>
-												</tr>
-												<tr>
-													<th scope="row">3</th>
-													<td>SshService</td>
-													<td>11:35hs 11/06/2024</td>
-												</tr>
 											</tbody>
 										</table>
 									</div>
@@ -127,14 +112,15 @@
 									</div>
 								</div>
 
-								<div class="col-md-4">
+								<div class="col-md-5">
 									<div class="card h-100 d-flex flex-column">
 										<table id="ObservableIpTable" class="table table-striped table-hover">
 											<thead>
 												<tr>
 													<th scope="col">#</th>
-													<th scope="col">IP Found</th>
 													<th scope="col">Timestamp</th>
+													<th scope="col">Decoy</th>
+													<th scope="col">IP Found</th>
 												</tr>
 											</thead>
 											<tbody>

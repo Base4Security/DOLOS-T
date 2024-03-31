@@ -21,6 +21,12 @@ socket.on('activity_observable_ips', (data) => {
     updateIPs(observable_ips);
 });
 
+socket.on('activity_observable_usage', (data) => {
+    const observable_usage = data.observable_usage;
+    // Update UI with Obsercable IPs
+    updateUsage(observable_usage);
+});
+
 // Function to update the UI with unique logs
 function updateUI(logs) {
     const logList = document.getElementById('logList');
@@ -47,9 +53,48 @@ function updateIPs(observable_ips) {
 
     // Clear the current rows
     ObservableIpTableBody.innerHTML = '';
-
+    console.log(observable_ips)
     // Loop through each item in the data array
     observable_ips.forEach(function(item) {
+        var parsed_item = JSON.parse(item);
+        // Create a new row
+        var row = document.createElement('tr');
+
+        // Create and append the 'id' cell
+        var idCell = document.createElement('th');
+        idCell.scope = 'row';
+        idCell.textContent = parsed_item.id;
+        row.appendChild(idCell);
+
+        // Create and append the 'timestamp' cell
+        var timestampCell = document.createElement('td');
+        timestampCell.textContent = parsed_item.timestamp;
+        row.appendChild(timestampCell);
+
+        // Create and append the 'decoy' cell
+        var decoyCell = document.createElement('td');
+        decoyCell.textContent = parsed_item.decoy;
+        row.appendChild(decoyCell);
+
+        // Create and append the 'ip' cell
+        var ipCell = document.createElement('td');
+        ipCell.textContent = parsed_item.ip;
+        row.appendChild(ipCell);
+
+        // Append the row to the table body
+        ObservableIpTableBody.appendChild(row);
+    });
+}
+
+// Function to update the UI with Obsercable Usage
+function updateUsage(observable_usage) {
+
+    var ObservableUsageTableBody = document.getElementById('ObservableUsageTable').getElementsByTagName('tbody')[0];
+
+    // Clear the current rows
+    ObservableUsageTableBody.innerHTML = '';
+    // Loop through each item in the data array
+    observable_usage.forEach(function(item) {
         var parsed_item = JSON.parse(item);
         // Create a new row
         var row = document.createElement('tr');
@@ -59,18 +104,18 @@ function updateIPs(observable_ips) {
         idCell.textContent = parsed_item.id;
         row.appendChild(idCell);
 
-        // Create and append the 'ip' cell
-        var ipCell = document.createElement('td');
-        ipCell.textContent = parsed_item.ip;
-        row.appendChild(ipCell);
+        // Create and append the 'decoy' cell
+        var decoyCell = document.createElement('td');
+        decoyCell.textContent = parsed_item.decoy;
+        row.appendChild(decoyCell);
 
-        // Create and append the 'timestamp' cell
-        var timestampCell = document.createElement('td');
-        timestampCell.textContent = parsed_item.timestamp;
-        row.appendChild(timestampCell);
+        // Create and append the 'usage' cell
+        var usagepCell = document.createElement('td');
+        usagepCell.textContent = parsed_item.usage;
+        row.appendChild(usagepCell);
 
         // Append the row to the table body
-        ObservableIpTableBody.appendChild(row);
+        ObservableUsageTableBody.appendChild(row);
     });
 }
 

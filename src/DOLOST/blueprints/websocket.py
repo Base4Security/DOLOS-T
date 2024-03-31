@@ -69,7 +69,10 @@ class WebSocketNamespace(Namespace):
 
             observable_ips = ActivityViewer.review_observable_ips()
             self.emit('activity_observable_ips', {'observable_ips': observable_ips})
-            
+
+            observable_usage = ActivityViewer.review_observable_usage()
+            self.emit('activity_observable_usage', {'observable_usage': observable_usage})
+
             self.thread_stop_event.wait(5)  # Wait for 5 second before sending next update
 
             # Auxiliary function turn on crond every 60 seconds

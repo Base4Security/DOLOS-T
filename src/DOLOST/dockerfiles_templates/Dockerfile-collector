@@ -8,10 +8,13 @@ COPY ./app/rsyslog.conf /etc/rsyslog.conf
 RUN mkdir /var/log/observables
 COPY ./app/extract_ips.sh /usr/local/bin/extract_ips.sh
 RUN chmod +x /usr/local/bin/extract_ips.sh
+COPY ./app/extract_usage.sh /usr/local/bin/extract_usage.sh
+RUN chmod +x /usr/local/bin/extract_usage.sh
 
 # Create a crontab file and add a job that runs your script every 5 minutes
 # CHANGE ME TO 5 # CHANGE ME TO 5 # CHANGE ME TO 5 # CHANGE ME TO 5 # CHANGE ME TO 5 # CHANGE ME TO 5 # CHANGE ME TO 5 # CHANGE ME TO 5 # CHANGE ME TO 5
-RUN (crontab -l 2>/dev/null; echo "*/1 * * * * /usr/local/bin/extract_ips.sh >> /var/log/observables.log 2>&1") | crontab -
+RUN (crontab -l 2>/dev/null; echo "*/1 * * * * /usr/local/bin/extract_ips.sh >> /var/log/observable_ips.log 2>&1") | crontab -
+RUN (crontab -l 2>/dev/null; echo "*/1 * * * * /usr/local/bin/extract_usage.sh >> /var/log/observable_usage.log 2>&1") | crontab -
 
 # Expose the syslog and log files
 EXPOSE 514/udp
