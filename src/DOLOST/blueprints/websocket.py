@@ -62,7 +62,6 @@ class WebSocketNamespace(Namespace):
         Continuously fetches and emits activity logs until stop event is set.
 
         """
-        auxcount = 0
         while not self.thread_stop_event.is_set():
             logs = ActivityViewer.review_logs()
             self.emit('activity_logs', {'logs': logs})
@@ -73,13 +72,10 @@ class WebSocketNamespace(Namespace):
             observable_usage = ActivityViewer.review_observable_usage()
             self.emit('activity_observable_usage', {'observable_usage': observable_usage})
 
-            self.thread_stop_event.wait(5)  # Wait for 5 second before sending next update
+            observable_interesting = ActivityViewer.review_interesting_observable()
+            self.emit('activity_observable_interesting', {'observable_interesting': observable_interesting})
 
-            # Auxiliary function turn on crond every 60 seconds
-            if (auxcount == 0):
-                ActivityViewer.turn_on_crond()
-                auxcount = 60
-            auxcount = auxcount - 1
+            self.thread_stop_event.wait(5)  # Wait for 5 second before sending next update
 
     def on_request_activity(self):
         """

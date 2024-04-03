@@ -83,30 +83,16 @@
 
 								<div class="col-md-4">
 									<div class="card h-100 d-flex flex-column">
-										<table class="table table-striped table-hover">
+										<table id="ObservableInterestingTable" class="table table-striped table-hover">
 											<thead>
 												<tr>
 													<th scope="col">#</th>
-													<th scope="col">Command History</th>
 													<th scope="col">Timestamp</th>
+													<th scope="col">Decoy</th>
+													<th scope="col">Observable</th>
 												</tr>
 											</thead>
 											<tbody>
-												<tr>
-													<th scope="row">1</th>
-													<td>ls .</td>
-													<td>09:42hs 10/05/2024</td>
-												</tr>
-												<tr>
-													<th scope="row">2</th>
-													<td>whoami</td>
-													<td>09:44hs 10/05/2024</td>
-												</tr>
-												<tr>
-													<th scope="row">3</th>
-													<td>ping 8.8.8.8</td>
-													<td>11:35hs 11/06/2024</td>
-												</tr>
 											</tbody>
 										</table>
 									</div>
@@ -145,7 +131,7 @@
 									Raw Decoys Activity
 								</button>
 							</h2>
-							<div id="activityDetails" class="accordion-collapse collapse" aria-labelledby="activityDetails" data-bs-parent="#AcAccordion">
+							<div id="activityDetails" class="accordion-collapse collapse show" aria-labelledby="activityDetails" data-bs-parent="#AcAccordion">
 								<div class="accordion-body">
 									<div class="terminal-container mt-4 mb-4">
 										<div class="terminal-header d-flex justify-content-between align-items-center">

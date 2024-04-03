@@ -27,6 +27,12 @@ socket.on('activity_observable_usage', (data) => {
     updateUsage(observable_usage);
 });
 
+socket.on('activity_observable_interesting', (data) => {
+    const observable_interesting = data.observable_interesting;
+    // Update UI with Obsercable IPs
+    updateInteresting(observable_interesting);
+});
+
 // Function to update the UI with unique logs
 function updateUI(logs) {
     const logList = document.getElementById('logList');
@@ -116,6 +122,46 @@ function updateUsage(observable_usage) {
 
         // Append the row to the table body
         ObservableUsageTableBody.appendChild(row);
+    });
+}
+
+// Function to update the UI with Obsercable IPs
+function updateInteresting(observable_interesting) {
+
+    var ObservableInterestingTableBody = document.getElementById('ObservableInterestingTable').getElementsByTagName('tbody')[0];
+
+    // Clear the current rows
+    ObservableInterestingTableBody.innerHTML = '';
+    console.log(observable_interesting)
+    // Loop through each item in the data array
+    observable_interesting.forEach(function(item) {
+        var parsed_item = JSON.parse(item);
+        // Create a new row
+        var row = document.createElement('tr');
+
+        // Create and append the 'id' cell
+        var idCell = document.createElement('th');
+        idCell.scope = 'row';
+        idCell.textContent = parsed_item.id;
+        row.appendChild(idCell);
+
+        // Create and append the 'timestamp' cell
+        var timestampCell = document.createElement('td');
+        timestampCell.textContent = parsed_item.timestamp;
+        row.appendChild(timestampCell);
+
+        // Create and append the 'decoy' cell
+        var decoyCell = document.createElement('td');
+        decoyCell.textContent = parsed_item.decoy;
+        row.appendChild(decoyCell);
+
+        // Create and append the 'ip' cell
+        var dataCell = document.createElement('td');
+        dataCell.textContent = parsed_item.interesting_data;
+        row.appendChild(dataCell);
+
+        // Append the row to the table body
+        ObservableInterestingTableBody.appendChild(row);
     });
 }
 

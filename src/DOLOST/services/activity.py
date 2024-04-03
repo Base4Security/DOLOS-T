@@ -58,7 +58,7 @@ class ActivityViewer:
         container_id = "DolosT-Collector"
         file_path = "/var/log/observables/observable_ips.log"
         observable_ips = []
-        excluded_observable_ips = ["127.0.0.1","127.0.0.0","122.0.0.0", "200.100.0.1"]
+        excluded_observable_ips = ["127.0.0.1","127.0.0.0","122.0.0.0","0.0.0.0", "200.100.0.1"]
 
         # Create a command to check for ips on each file
         command = f"sh -c 'tail -n 5000 {file_path}*'"
@@ -90,6 +90,9 @@ class ActivityViewer:
             new_ip = '{"id": 1,  "decoy": "---", "ip": "Missing Collector","timestamp": "----" }'
             observable_ips.append(new_ip)
 
+        if (observable_ips == []):
+            new_ip = '{"id": 1,  "decoy": "---", "ip": "No IPs","timestamp": "----" }'
+            observable_ips.append(new_ip)
         return observable_ips
 
     def review_observable_usage():
@@ -156,18 +159,22 @@ class ActivityViewer:
         observable_usage = unique_data
 
         return observable_usage
-    
-    def turn_on_crond():
+
+    def review_interesting_observable():
         """
-        This is an auxiliary task to run crond in the collector
+        Review observables found on the log files.
+
+        This method retrieves the observables that are found on the log entries from the collector.
 
         Returns:
-            none
+            observable_interesting: A list containing the observables and timestamps.
         """
         container_id = "DolosT-Collector"
+        file_path = "/var/log/observables/observable_interesting.log"
+        observable_interesting = []
 
-        # Create a command to run crond
-        command = "sh -c 'crond'"
+        # Create a command to check for observables on each file
+        command = f"sh -c 'tail -n 5000 {file_path}*'"
         filters = {'name': [container_id]}
         CollectorExist = docker_manager.client.api.containers(filters=filters)
 
@@ -175,4 +182,27 @@ class ActivityViewer:
         if (CollectorExist):
             # Create the exec instance in the container
             exec_id = docker_manager.client.api.exec_create(container_id, command, tty=True)
-            docker_manager.client.api.exec_start(exec_id['Id'], stream=True)
+
+            # Start streaming the output of the command
+            for line in docker_manager.client.api.exec_start(exec_id['Id'], stream=True):
+                decoded_line = line.decode('utf-8')
+                if decoded_line == ("tail: can't open '/var/log/observables/observable_interesting.log*': No such file or directory\r\ntail: no files\r\n") :
+                    new_obsercable = '{"id": 1, "decoy": "---", "interesting_data": "No IPs","timestamp": "----" }'
+                    observable_interesting.append(new_obsercable)
+                else:    
+                    records = decoded_line.strip().split('\r\n')
+                    # Process each record
+                    i = 1
+                    for record in records:
+                        # Split each record by space to separate the timestamp and the IP address
+                        timestamp, decoy, interesting_data, none = record.split(',')
+                        observable_interesting.append('{"id": '+ str(i) +', "decoy": "'+ decoy +'", "interesting_data": "'+ interesting_data +'", "timestamp": "' + timestamp + '"}')
+                        i = i + 1
+        else:
+            new_obsercable = '{"id": 1,  "decoy": "---", "interesting_data": "Missing Collector","timestamp": "----" }'
+            observable_interesting.append(new_obsercable)
+
+        if (observable_interesting == []):
+            new_obsercable = '{"id": 1,  "decoy": "---", "interesting_data": "No IPs","timestamp": "----" }'
+            observable_interesting.append(new_obsercable)
+        return observable_interesting
