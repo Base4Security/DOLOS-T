@@ -1,6 +1,6 @@
 <p align="center">
 	<a href="https://dolost.readthedocs.io/en/latest/" rel="noopener">
-	 	<img src="https://github.com/dstainoB4/DOLOST/assets/103124157/2c478e1d-62a9-4b5c-8dca-68f2c77c9029" alt="DOLOST">
+	 	<img src="https://github.com/Base4Security/DOLOS-T/blob/master/docs/images/blacktransparentlogo.png?raw=true" alt="DOLOST">
 	</a>
 </p>
 
