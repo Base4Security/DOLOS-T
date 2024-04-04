@@ -187,7 +187,7 @@ class ActivityViewer:
             for line in docker_manager.client.api.exec_start(exec_id['Id'], stream=True):
                 decoded_line = line.decode('utf-8')
                 if decoded_line == ("tail: can't open '/var/log/observables/observable_interesting.log*': No such file or directory\r\ntail: no files\r\n") :
-                    new_obsercable = '{"id": 1, "decoy": "---", "interesting_data": "No IPs","timestamp": "----" }'
+                    new_obsercable = '{"id": 1, "decoy": "---", "interesting_data": "No Observable","timestamp": "----" }'
                     observable_interesting.append(new_obsercable)
                 else:    
                     records = decoded_line.strip().split('\r\n')
@@ -203,6 +203,6 @@ class ActivityViewer:
             observable_interesting.append(new_obsercable)
 
         if (observable_interesting == []):
-            new_obsercable = '{"id": 1,  "decoy": "---", "interesting_data": "No IPs","timestamp": "----" }'
+            new_obsercable = '{"id": 1,  "decoy": "---", "interesting_data": "No Observable","timestamp": "----" }'
             observable_interesting.append(new_obsercable)
         return observable_interesting

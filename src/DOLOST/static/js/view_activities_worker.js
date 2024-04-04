@@ -73,7 +73,7 @@ function updateIPs(observable_ips) {
 
         // Create and append the 'timestamp' cell
         var timestampCell = document.createElement('td');
-        timestampCell.textContent = parsed_item.timestamp;
+        timestampCell.textContent = parsed_item.timestamp.slice(0, -6);;
         row.appendChild(timestampCell);
 
         // Create and append the 'decoy' cell
@@ -116,6 +116,7 @@ function updateUsage(observable_usage) {
 
         // Create and append the 'usage' cell
         var usagepCell = document.createElement('td');
+        usagepCell.style.textAlign = "center"; 
         usagepCell.textContent = parsed_item.usage;
         row.appendChild(usagepCell);
 
@@ -145,19 +146,42 @@ function updateInteresting(observable_interesting) {
 
         // Create and append the 'timestamp' cell
         var timestampCell = document.createElement('td');
-        timestampCell.textContent = parsed_item.timestamp;
+        timestampCell.textContent = parsed_item.timestamp.slice(0, -6);
+ 
         row.appendChild(timestampCell);
 
         // Create and append the 'decoy' cell
         var decoyCell = document.createElement('td');
+        decoyCell.style.textAlign = "center"; 
         decoyCell.textContent = parsed_item.decoy;
         row.appendChild(decoyCell);
 
-        // Create and append the 'ip' cell
+        // Create and append the 'data' cell
         var dataCell = document.createElement('td');
-        dataCell.textContent = parsed_item.interesting_data;
+        var icon = document.createElement('i');
+
+        dataCell.style.textAlign = "center"; 
+        icon.classList.add('bi', 'bi-eye',"h6");
+        icon.style.fontSize = "14px";
+
+        // button.appendChild(icon);
+        dataCell.appendChild(icon)
         row.appendChild(dataCell);
 
+        // Add onclick event handler
+        row.onclick = function() {
+
+            document.getElementById('modalObservableData').textContent = parsed_item.interesting_data;
+            document.getElementById('modalObservableTimeStamp').textContent = parsed_item.timestamp;
+            document.getElementById('modalObservableDecoy').textContent = parsed_item.decoy;
+
+            // Show the modal
+            $('#ObservableModal').modal('show');
+
+            };
+        row.title = "Show Observable"
+        row.style.cursor = "pointer"
+                
         // Append the row to the table body
         ObservableInterestingTableBody.appendChild(row);
     });

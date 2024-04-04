@@ -89,7 +89,7 @@
 													<th scope="col">#</th>
 													<th scope="col">Timestamp</th>
 													<th scope="col">Decoy</th>
-													<th scope="col">Observable</th>
+													<th scope="col"style="text-align:center">Observable</th>
 												</tr>
 											</thead>
 											<tbody>
@@ -189,4 +189,39 @@
     </div>
 </div>
 
+	<!-- New Decoy Modal -->
+	<div class="modal modal-lg fade" id="ObservableModal" tabindex="-1" aria-labelledby="ObservableModalLabel" aria-hidden="true">
+	    <div class="modal-dialog modal-dialog-centered">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h5 class="modal-title" id="ObservableModalLabel">Observable</h5>
+	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	            </div>
+	                <div class="modal-body">
+	                    <div class="mb-3">
+	                        <div class="row">
+	                            <div class="col">
+	                                <label class="form-label" >Decoy:</label>
+									<h5 id="modalObservableDecoy"></h5>
+	                            </div>
+	                            <div class="col">
+	                                <label class="form-label">Timestamp:</label>
+									<h5 id="modalObservableTimeStamp"></h5>
+								</div>
+	                        </div>
+							<br>
+							<div class="row">
+	                                <label class="form-label">Message:</label>
+									<h5 id="modalObservableData"></h5>
+	                        </div>
+	                    </div>
+	                </div>
+	                <div class="modal-footer">
+	                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+	                </div>
+	        </div>
+	    </div>
+	</div>
+	<!-- / New Decoy Modal -->
+	
 {% endblock %}
