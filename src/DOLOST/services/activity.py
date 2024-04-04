@@ -39,7 +39,7 @@ class ActivityViewer:
                 new_logs.append(log_line)
 
             # If no logs received, show a message
-            if "tail: can't open '/var/log/decoys/*': No such file or directory\r\ntail: no files" in new_logs:
+            if "No such file or directory" in new_logs :
                 new_logs = ["No decoy logs received in the environment yet"]
         else:
             new_logs = ["No collector deployed in the environment yet"]
@@ -73,7 +73,7 @@ class ActivityViewer:
             # Start streaming the output of the command
             for line in docker_manager.client.api.exec_start(exec_id['Id'], stream=True):
                 decoded_line = line.decode('utf-8')
-                if decoded_line == ("tail: can't open '/var/log/observables/observable_ips.log*': No such file or directory\r\ntail: no files\r\n") :
+                if "No such file or directory" in decoded_line :
                     new_ip = '{"id": 1, "decoy": "---", "ip": "No IPs","timestamp": "----" }'
                     observable_ips.append(new_ip)
                 else:    
@@ -119,7 +119,7 @@ class ActivityViewer:
             # Start streaming the output of the command
             for line in docker_manager.client.api.exec_start(exec_id['Id'], stream=True):
                 decoded_line = line.decode('utf-8')
-                if decoded_line == ("tail: can't open '/var/log/observables/observable_usage.log*': No such file or directory\r\ntail: no files\r\n") :
+                if "No such file or directory" in decoded_line :
                     new_data = '{"id": 1, "decoy": "No Usage data","usage": "----" }'
                     observable_usage.append(new_data)
                 else:    
@@ -186,7 +186,7 @@ class ActivityViewer:
             # Start streaming the output of the command
             for line in docker_manager.client.api.exec_start(exec_id['Id'], stream=True):
                 decoded_line = line.decode('utf-8')
-                if decoded_line == ("tail: can't open '/var/log/observables/observable_interesting.log*': No such file or directory\r\ntail: no files\r\n") :
+                if "No such file or directory" in decoded_line :
                     new_obsercable = '{"id": 1, "decoy": "---", "interesting_data": "No Observable","timestamp": "----" }'
                     observable_interesting.append(new_obsercable)
                 else:    
