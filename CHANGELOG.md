@@ -1,6 +1,19 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+
+## [1.1] - 2024-04-04 [Public]
+
+### Features
+
+- Improved the activity dashboard.
+- Modified the Dockerfile for the collector, in order to use python.
+- Added a new collector script, to hanlde interaction in the decoys.
+
+### Fixes
+
+- Rectified typos.
+
 ## [1.0] - 2024-03-29 [Public]
 
 ### Features
