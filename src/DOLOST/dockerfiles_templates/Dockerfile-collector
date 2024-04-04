@@ -1,9 +1,8 @@
 # Use the rsyslog base image
 FROM rsyslog/syslog_appliance_alpine
 
-# Prepare python env
-RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
-RUN apk add py3-dateutil
+# Install Python and dateutil
+RUN apk add --update --no-cache python3 py3-dateutil
 
 # Configure rsyslog to listen for incoming logs
 COPY ./app/rsyslog.conf /etc/rsyslog.conf
@@ -11,23 +10,19 @@ COPY ./app/rsyslog.conf /etc/rsyslog.conf
 #Configure observables extractors
 RUN mkdir /var/log/observables
 
-# Create a crontab file and add a job that runs your script every 5 minutes
-RUN (crontab -l 2>/dev/null; echo "*/1 * * * * /usr/local/bin/startcollector.sh >> /var/log/observable.log 2>&1") | crontab -
-
-COPY ./app/startcollector.sh /usr/local/bin/startcollector.sh
+# Copy the collector script into the container
 COPY ./app/collector.py /usr/local/bin/collector.py
 
-# Make the start collector script executable
-RUN chmod +x /usr/local/bin/startcollector.sh
+# Create a crontab file and add a job that runs the collector every minute
+RUN (crontab -l 2>/dev/null; echo "*/1 * * * * /usr/bin/python3 /usr/local/bin/collector.py >> /var/log/observable.log 2>&1") | crontab -
 
-RUN echo "#!/bin/ash" >> ./starter.tmp
-RUN echo "crond" >> ./starter.tmp
-RUN sed "1d" starter.sh >> ./starter.tmp
-RUN mv ./starter.tmp ./starter.sh
-RUN chmod +x ./starter.sh
+# Setup crontab
+RUN echo -e "#!/bin/ash\n\
+crond" > /tmp/starter.tmp && \
+sed "1d" /home/appliance/starter.sh >> /tmp/starter.tmp && \
+mv /tmp/starter.tmp /home/appliance/starter.sh && \
+chmod +x /home/appliance/starter.sh
 
 # Expose the syslog and log files
 EXPOSE 514/udp
 EXPOSE 514/tcp
-
-

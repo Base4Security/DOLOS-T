@@ -17,19 +17,19 @@ socket.on('activity_logs', (data) => {
 
 socket.on('activity_observable_ips', (data) => {
     const observable_ips = data.observable_ips;
-    // Update UI with Obsercable IPs
+    // Update UI with Observable IPs
     updateIPs(observable_ips);
 });
 
 socket.on('activity_observable_usage', (data) => {
     const observable_usage = data.observable_usage;
-    // Update UI with Obsercable IPs
+    // Update UI with Observable IPs
     updateUsage(observable_usage);
 });
 
 socket.on('activity_observable_interesting', (data) => {
     const observable_interesting = data.observable_interesting;
-    // Update UI with Obsercable IPs
+    // Update UI with Observable IPs
     updateInteresting(observable_interesting);
 });
 
@@ -52,14 +52,13 @@ function updateUI(logs) {
     });
 }
 
-// Function to update the UI with Obsercable IPs
+// Function to update the UI with Observable IPs
 function updateIPs(observable_ips) {
 
     var ObservableIpTableBody = document.getElementById('ObservableIpTable').getElementsByTagName('tbody')[0];
 
     // Clear the current rows
     ObservableIpTableBody.innerHTML = '';
-    console.log(observable_ips)
     // Loop through each item in the data array
     observable_ips.forEach(function(item) {
         var parsed_item = JSON.parse(item);
@@ -92,7 +91,7 @@ function updateIPs(observable_ips) {
     });
 }
 
-// Function to update the UI with Obsercable Usage
+// Function to update the UI with Observable Usage
 function updateUsage(observable_usage) {
 
     var ObservableUsageTableBody = document.getElementById('ObservableUsageTable').getElementsByTagName('tbody')[0];
@@ -125,14 +124,13 @@ function updateUsage(observable_usage) {
     });
 }
 
-// Function to update the UI with Obsercable IPs
+// Function to update the UI with Observable IPs
 function updateInteresting(observable_interesting) {
 
     var ObservableInterestingTableBody = document.getElementById('ObservableInterestingTable').getElementsByTagName('tbody')[0];
 
     // Clear the current rows
     ObservableInterestingTableBody.innerHTML = '';
-    console.log(observable_interesting)
     // Loop through each item in the data array
     observable_interesting.forEach(function(item) {
         var parsed_item = JSON.parse(item);

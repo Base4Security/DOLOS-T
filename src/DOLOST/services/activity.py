@@ -61,7 +61,7 @@ class ActivityViewer:
         excluded_observable_ips = ["127.0.0.1","127.0.0.0","122.0.0.0","0.0.0.0", "200.100.0.1"]
 
         # Create a command to check for ips on each file
-        command = f"sh -c 'tail -n 5000 {file_path}*'"
+        command = f"sh -c 'cat {file_path}*'"
         filters = {'name': [container_id]}
         CollectorExist = docker_manager.client.api.containers(filters=filters)
 
@@ -82,7 +82,7 @@ class ActivityViewer:
                     i = 1
                     for record in records:
                         # Split each record by space to separate the timestamp and the IP address
-                        timestamp, decoy, ip_address, none = record.split(',')
+                        timestamp, decoy, ip_address = record.split(',')
                         if (ip_address not in excluded_observable_ips):
                             observable_ips.append('{"id": '+ str(i) +', "decoy": "'+ decoy +'", "ip": "'+ ip_address +'", "timestamp": "' + timestamp + '"}')
                             i = i + 1
@@ -107,7 +107,7 @@ class ActivityViewer:
         observable_usage = []
 
         # Create a command to check for ips on each file
-        command = f"sh -c 'tail -n 5000 {file_path}*'"
+        command = f"sh -c 'cat {file_path}*'"
         filters = {'name': [container_id]}
         CollectorExist = docker_manager.client.api.containers(filters=filters)
 
@@ -174,7 +174,7 @@ class ActivityViewer:
         observable_interesting = []
 
         # Create a command to check for observables on each file
-        command = f"sh -c 'tail -n 5000 {file_path}*'"
+        command = f"sh -c 'cat {file_path}*'"
         filters = {'name': [container_id]}
         CollectorExist = docker_manager.client.api.containers(filters=filters)
 
@@ -195,7 +195,7 @@ class ActivityViewer:
                     i = 1
                     for record in records:
                         # Split each record by space to separate the timestamp and the IP address
-                        timestamp, decoy, interesting_data, none = record.split(',')
+                        timestamp, decoy, interesting_data = record.split(',')
                         observable_interesting.append('{"id": '+ str(i) +', "decoy": "'+ decoy +'", "interesting_data": "'+ interesting_data +'", "timestamp": "' + timestamp + '"}')
                         i = i + 1
         else:
