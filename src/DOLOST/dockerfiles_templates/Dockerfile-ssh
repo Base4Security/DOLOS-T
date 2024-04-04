@@ -28,6 +28,10 @@ RUN echo 'Banner /etc/ssh/welcome-banner' >> /etc/ssh/sshd_config
 # Enable Root login
 RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
+# Enable logs on ssh
+RUN echo 'SyslogFacility AUTH' >> /etc/ssh/sshd_config
+RUN echo 'LogLevel DEBUG' >> /etc/ssh/sshd_config
+
 # Output all logs to stdout
 RUN find /var/log -type f -name "*" -exec ln -sf /dev/stdout {} \;
 
@@ -35,4 +39,4 @@ RUN find /var/log -type f -name "*" -exec ln -sf /dev/stdout {} \;
 EXPOSE 22
 
 # Start SSH server
-CMD ["/usr/sbin/sshd", "-D"]
+CMD ["/usr/sbin/sshd", "-D", "-e"]
