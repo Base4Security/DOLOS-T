@@ -73,19 +73,22 @@ class ActivityViewer:
             # Start streaming the output of the command
             for line in docker_manager.client.api.exec_start(exec_id['Id'], stream=True):
                 decoded_line = line.decode('utf-8')
-                if "No such file or directory" in decoded_line :
-                    new_ip = '{"id": 1, "decoy": "---", "ip": "No IPs","timestamp": "----" }'
-                    observable_ips.append(new_ip)
-                else:    
-                    records = decoded_line.strip().split('\r\n')
-                    # Process each record
-                    i = 1
-                    for record in records:
-                        # Split each record by space to separate the timestamp and the IP address
-                        timestamp, decoy, ip_address = record.split(',')
-                        if (ip_address not in excluded_observable_ips):
-                            observable_ips.append('{"id": '+ str(i) +', "decoy": "'+ decoy +'", "ip": "'+ ip_address +'", "timestamp": "' + timestamp + '"}')
-                            i = i + 1
+                try:
+                    if "No such file or directory" in decoded_line :
+                        new_ip = '{"id": 1, "decoy": "---", "ip": "No IPs","timestamp": "----" }'
+                        observable_ips.append(new_ip)
+                    else:    
+                        records = decoded_line.strip().split('\r\n')
+                        # Process each record
+                        i = 1
+                        for record in records:
+                            # Split each record by space to separate the timestamp and the IP address
+                            timestamp, decoy, ip_address = record.split(',')
+                            if (ip_address not in excluded_observable_ips):
+                                observable_ips.append('{"id": '+ str(i) +', "decoy": "'+ decoy +'", "ip": "'+ ip_address +'", "timestamp": "' + timestamp + '"}')
+                                i = i + 1
+                except Exception:
+                    pass
         else:
             new_ip = '{"id": 1,  "decoy": "---", "ip": "Missing Collector","timestamp": "----" }'
             observable_ips.append(new_ip)
@@ -119,18 +122,22 @@ class ActivityViewer:
             # Start streaming the output of the command
             for line in docker_manager.client.api.exec_start(exec_id['Id'], stream=True):
                 decoded_line = line.decode('utf-8')
-                if "No such file or directory" in decoded_line :
-                    new_data = '{"id": 1, "decoy": "No Usage data","usage": "----" }'
-                    observable_usage.append(new_data)
-                else:    
-                    records = decoded_line.strip().split('\r\n')
-                    # Process each record
-                    i = 1
-                    for record in records:
-                        # Split each record by space to separate the timestamp and the IP address
-                        usage, decoy = record.split(',')
-                        observable_usage.append('{"id": '+ str(i) +', "decoy": "'+ decoy +'", "usage": "' + usage + '"}')
-                        i = i + 1
+                try:
+                    if "No such file or directory" in decoded_line :
+                        new_data = '{"id": 1, "decoy": "No Usage data","usage": "----" }'
+                        observable_usage.append(new_data)
+                    else:    
+                        records = decoded_line.strip().split('\r\n')
+                        # Process each record
+                        i = 1
+                        for record in records:
+                            # Split each record by space to separate the timestamp and the IP address
+                            usage, decoy = record.split(',')
+                            observable_usage.append('{"id": '+ str(i) +', "decoy": "'+ decoy +'", "usage": "' + usage + '"}')
+                            i = i + 1
+                except Exception:
+                    pass
+
         else:
             new_ip = '{"id": 1, "decoy": "Missing Collector","usage": "----" }'
             observable_usage.append(new_ip)
