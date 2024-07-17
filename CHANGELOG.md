@@ -2,7 +2,17 @@
 All notable changes to this project will be documented in this file.
 
 
+## [1.2] - 2024-07-17 [Public]
+
+### Fixes
+
+- Resolved issues with updating logs, ensuring the Logs window functions correctly.
+- Corrected the `setup.py` file to ensure proper package packing.
+- Enhanced the activity viewer with various improvements for better usability and performance.
+
+
 ## [1.1] - 2024-04-04 [Public]
+
 
 ### Features
 
@@ -13,6 +23,7 @@ All notable changes to this project will be documented in this file.
 ### Fixes
 
 - Rectified typos.
+
 
 ## [1.0] - 2024-03-29 [Public]
 
@@ -45,6 +56,7 @@ Version 0.5 introduces refined features, bug fixes, and structural enhancements 
 ### Fixes
 - Rectified typos and removed unused dependencies for a cleaner codebase.
 
+
 ## [0.2] - 2024-03-20 [Private]
 Version 0.2 marks the initial documentation setup, structural enhancements, and addition of contribution guidelines.
 
@@ -54,6 +66,7 @@ Version 0.2 marks the initial documentation setup, structural enhancements, and 
 - Updated TODO list for clearer project goals.
 - Documented blueprints, CLI, context, and services for improved understanding.
 - Added comprehensive usage documentation.
+
 
 ## [0.1] - 2024-03-12 [Private]
 Version 0.1 brings significant improvements to user interface, functionality, and documentation.
