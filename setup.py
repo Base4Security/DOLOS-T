@@ -40,6 +40,8 @@ setup(
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     install_requires=load_requirements(),
+    use_scm_version=True,
+    setup_requires=['setuptools_scm'],
     entry_points={
         'console_scripts': [
             'DOLOST = DOLOST.cli:main'

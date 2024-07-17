@@ -9,3 +9,6 @@
 operationsdb.json
 docker_client_config
 _build/
+
+dist/*
+*egg-*

@@ -39,9 +39,9 @@ function updateUI(logs) {
     const logListModal = document.getElementById('logListModal');
 
     // Iterate over logs and append only new ones
+    logList.innerHTML = '';
+    logListModal.innerHTML = '';
     logs.forEach(log => {
-        logList.innerHTML = '';
-        logListModal.innerHTML = '';
         const listItem = document.createElement('p');
         listItem.textContent = log;
         listItem.classList.add('log-line');
